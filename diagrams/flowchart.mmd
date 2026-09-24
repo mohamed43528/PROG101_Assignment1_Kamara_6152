@@ -1,0 +1,45 @@
+flowchart TD
+    A([Start]) --> B[Display Main Menu]
+    B --> C{User Selection}
+    C -->|Check Availability| D[Get Patient Location]
+    C -->|Check Medicine| E[Get Medicine Name and Location]
+    C -->|Book Appointment| F[Get Patient Phone]
+    C -->|Emergency| G[Get Location and Symptoms]
+    C -->|Invalid| B
+
+    D --> D1{Clinic found within radius<br/>with doctor and open slot?}
+    D1 -->|No, radius less than max| D2[Increase search radius]
+    D2 --> D1
+    D1 -->|Yes| D3[Display clinic list]
+    D1 -->|No, max radius reached| D4[Display: No availability found]
+
+    E --> E1[Search nearby clinics for medicine]
+    E1 --> E2{Medicine in stock<br/>at any clinic?}
+    E2 -->|Yes| E3[Display clinics with stock]
+    E2 -->|No| E4[Display: Not in stock nearby]
+
+    F --> F1{Patient registered?}
+    F1 -->|No| F2[Register Patient]
+    F1 -->|Yes| F3[Get preferred clinic and date]
+    F2 --> F3
+    F3 --> F4{Slot available?}
+    F4 -->|Yes| F5[Confirm booking and send SMS]
+    F4 -->|No| F6[Suggest next available date]
+
+    G --> G1{Symptoms match<br/>emergency keywords?}
+    G1 -->|No| F
+    G1 -->|Yes| G2{Clinic with doctor<br/>found within radius?}
+    G2 -->|No, radius less than max| G3[Increase search radius]
+    G3 --> G2
+    G2 -->|Yes| G4[Display urgent referral and notify clinic]
+    G2 -->|No, max radius reached| G5[Display: Contact district hospital hotline]
+
+    D3 --> H([Log interaction])
+    D4 --> H
+    E3 --> H
+    E4 --> H
+    F5 --> H
+    F6 --> H
+    G4 --> H
+    G5 --> H
+    H --> I([End])
