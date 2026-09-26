@@ -1,0 +1,219 @@
+===========================================================
+CHARS - Community Health Access and Referral System
+PSEUDOCODE
+===========================================================
+
+CONSTANTS
+    MAX_SEARCH_RADIUS_KM = 25
+    RADIUS_STEP_KM = 5
+    EMERGENCY_KEYWORDS = ["severe bleeding", "difficulty breathing",
+                           "unconscious", "severe injury"]
+
+DATA TYPES
+    Patient
+        patientID   : Integer
+        name        : String
+        age         : Integer
+        phone       : String
+        location    : String
+
+    Clinic
+        clinicID      : Integer
+        name          : String
+        location      : String
+        doctorOnDuty  : Boolean
+        openSlots     : Integer
+        medicineStock : List of MedicineRecord
+
+    MedicineRecord
+        medicineName : String
+        quantity     : Integer
+
+    Appointment
+        appointmentID : Integer
+        patientID     : Integer
+        clinicID      : Integer
+        date          : Date
+        status        : String
+
+-----------------------------------------------------------
+MODULE mainMenu()
+-----------------------------------------------------------
+    DISPLAY "1. Check Clinic Availability"
+    DISPLAY "2. Check Medicine Stock"
+    DISPLAY "3. Book Appointment"
+    DISPLAY "4. Emergency Referral"
+    GET userChoice
+    CALL routeRequest(userChoice)
+END MODULE
+
+-----------------------------------------------------------
+MODULE routeRequest(choice)
+-----------------------------------------------------------
+    IF choice = 1 THEN
+        CALL checkClinicAvailability()
+    ELSE IF choice = 2 THEN
+        CALL checkMedicineStock()
+    ELSE IF choice = 3 THEN
+        CALL bookAppointment()
+    ELSE IF choice = 4 THEN
+        CALL referEmergency()
+    ELSE
+        DISPLAY "Invalid option, please try again"
+        CALL mainMenu()
+    END IF
+END MODULE
+
+-----------------------------------------------------------
+MODULE checkClinicAvailability()
+-----------------------------------------------------------
+    GET patientLocation
+    SET radius = RADIUS_STEP_KM
+    SET found = FALSE
+
+    WHILE (found = FALSE) AND (radius <= MAX_SEARCH_RADIUS_KM) DO
+        SET nearbyClinics = findClinicsWithin(patientLocation, radius)
+        FOR EACH clinic IN nearbyClinics DO
+            IF clinic.doctorOnDuty = TRUE AND clinic.openSlots > 0 THEN
+                DISPLAY clinic.name + " - " + clinic.openSlots + " slots available"
+                SET found = TRUE
+            END IF
+        END FOR
+        IF found = FALSE THEN
+            SET radius = radius + RADIUS_STEP_KM
+        END IF
+    END WHILE
+
+    IF found = FALSE THEN
+        DISPLAY "No clinic with availability found within " + MAX_SEARCH_RADIUS_KM + " km"
+    END IF
+    CALL logInteraction()
+END MODULE
+
+-----------------------------------------------------------
+MODULE checkMedicineStock()
+-----------------------------------------------------------
+    GET patientLocation
+    GET medicineName
+    SET nearbyClinics = findClinicsWithin(patientLocation, MAX_SEARCH_RADIUS_KM)
+    SET resultsFound = FALSE
+
+    FOR EACH clinic IN nearbyClinics DO
+        FOR EACH record IN clinic.medicineStock DO
+            IF record.medicineName = medicineName AND record.quantity > 0 THEN
+                DISPLAY clinic.name + " has " + record.quantity + " units of " + medicineName
+                SET resultsFound = TRUE
+            END IF
+        END FOR
+    END FOR
+
+    IF resultsFound = FALSE THEN
+        DISPLAY medicineName + " not currently in stock nearby"
+    END IF
+    CALL logInteraction()
+END MODULE
+
+-----------------------------------------------------------
+MODULE bookAppointment()
+-----------------------------------------------------------
+    GET patientPhone
+    SET patient = findPatientByPhone(patientPhone)
+
+    IF patient = NULL THEN
+        CALL registerPatient()
+        SET patient = findPatientByPhone(patientPhone)
+    END IF
+
+    GET preferredClinicID, preferredDate
+    SET clinic = findClinicByID(preferredClinicID)
+
+    IF clinic.openSlots > 0 THEN
+        SET newAppointment.appointmentID = generateID()
+        SET newAppointment.patientID = patient.patientID
+        SET newAppointment.clinicID = clinic.clinicID
+        SET newAppointment.date = preferredDate
+        SET newAppointment.status = "Confirmed"
+        SET clinic.openSlots = clinic.openSlots - 1
+        CALL sendNotification(patient.phone,
+             "Appointment confirmed at " + clinic.name + " on " + preferredDate)
+    ELSE
+        DISPLAY "No slots available on that date. Suggesting next available date..."
+        CALL suggestNextAvailable(clinic)
+    END IF
+    CALL logInteraction()
+END MODULE
+
+-----------------------------------------------------------
+MODULE referEmergency()
+-----------------------------------------------------------
+    GET patientLocation, symptomDescription
+    SET isEmergency = FALSE
+
+    FOR EACH keyword IN EMERGENCY_KEYWORDS DO
+        IF symptomDescription CONTAINS keyword THEN
+            SET isEmergency = TRUE
+        END IF
+    END FOR
+
+    IF isEmergency = TRUE THEN
+        SET radius = RADIUS_STEP_KM
+        SET found = FALSE
+
+        WHILE (found = FALSE) AND (radius <= MAX_SEARCH_RADIUS_KM) DO
+            SET nearbyClinics = findClinicsWithin(patientLocation, radius)
+            FOR EACH clinic IN nearbyClinics DO
+                IF clinic.doctorOnDuty = TRUE THEN
+                    DISPLAY "URGENT REFERRAL: Proceed to " + clinic.name + " immediately"
+                    CALL sendNotification(clinic.phone,
+                         "Incoming emergency patient from " + patientLocation)
+                    SET found = TRUE
+                END IF
+            END FOR
+            IF found = FALSE THEN
+                SET radius = radius + RADIUS_STEP_KM
+            END IF
+        END WHILE
+
+        IF found = FALSE THEN
+            DISPLAY "No nearby clinic available. Contact district hospital hotline immediately."
+        END IF
+    ELSE
+        DISPLAY "Symptoms not flagged as emergency. Redirecting to Book Appointment."
+        CALL bookAppointment()
+    END IF
+    CALL logInteraction()
+END MODULE
+
+-----------------------------------------------------------
+MODULE registerPatient()
+-----------------------------------------------------------
+    GET name, age, phone, location
+    SET newPatient.patientID = generateID()
+    SET newPatient.name = name
+    SET newPatient.age = age
+    SET newPatient.phone = phone
+    SET newPatient.location = location
+    STORE newPatient
+    DISPLAY "Registration successful"
+END MODULE
+
+-----------------------------------------------------------
+MODULE sendNotification(phone, message)
+-----------------------------------------------------------
+    SEND SMS TO phone WITH message
+END MODULE
+
+-----------------------------------------------------------
+MODULE logInteraction()
+-----------------------------------------------------------
+    STORE timestamp, userChoice, outcome IN interactionLog
+    (used later for clinic reporting and resource planning)
+END MODULE
+
+-----------------------------------------------------------
+MAIN
+-----------------------------------------------------------
+START
+    CALL mainMenu()
+END
+===========================================================
