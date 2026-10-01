@@ -43,9 +43,20 @@ services).
 |---|---|
 | `docs/CHARS_Assignment_Report.docx` | Full assignment report: rationale, algorithm, pseudocode, flowchart, modules, sample outputs, SDG/Open Source/DPG justification, references |
 | `docs/pseudocode.txt` | Pseudocode for all system modules (plain text) |
-| `diagrams/flowchart.mmd` | Flowchart source (Mermaid syntax) — open at https://mermaid.live or import into diagrams.net |
-| `diagrams/flowchart.png` | Rendered flowchart image |
+| `diagrams/flowchart.mmd` | Overview flowchart source (Mermaid syntax) — open at https://mermaid.live or import into diagrams.net |
+| `diagrams/flowchart.png` | Rendered overview flowchart image |
+| `diagrams/CHARS.fprg` | **Runnable flowchart built in Flowgorithm** — open directly in the Flowgorithm app and press Run to reproduce the Section 6 sample outputs |
 | `generate_report.js` | Script used to generate the .docx report (Node.js, `docx` npm package) |
+| `generate_flowgorithm.py` | Script used to generate `diagrams/CHARS.fprg` |
+
+### Running the Flowgorithm version
+
+1. Install [Flowgorithm](http://www.flowgorithm.org/) if you don't already have it.
+2. Open `diagrams/CHARS.fprg`.
+3. Press **Run** (F5). Choose option 1–4 at the prompt to see each module execute.
+4. The five-clinic sample dataset is hard-coded in `Main` (parallel arrays, since
+   Flowgorithm has no record/struct type) — the same dataset documented in Section 6 of
+   the report, so the output you see matches the report exactly.
 
 ## System Modules (Modular Design)
 
