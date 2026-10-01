@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="2.11">
+    <attributes>
+        <attribute name="name" value="CHARS"/>
+        <attribute name="authors" value="Mohamed"/>
+        <attribute name="about" value="Community Health Access and Referral System - PROG101 Assignment 1"/>
+        <attribute name="saved" value="2026-10-03 22:43:50"/>
+        <attribute name="created" value="TW9oYW1lZDtMSU1LT0tXSU5HOzIwMjYtMTAtMDM7MjI6NDM6NTA7MQ=="/>
+        <attribute name="edited" value="TW9oYW1lZDtMSU1LT0tXSU5HOzIwMjYtMTAtMDM7MjI6NDM6NTA7MQ=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <comment text="CHARS - sample clinic dataset (nearest-first). In production this would be"/>
+            <comment text="populated from a live clinic database rather than hard-coded here."/>
+            <declare name="clinicName" type="String" array="True" size="5"/>
+            <declare name="clinicDoctorOnDuty" type="Boolean" array="True" size="5"/>
+            <declare name="clinicOpenSlots" type="Integer" array="True" size="5"/>
+            <declare name="clinicACTStock" type="Integer" array="True" size="5"/>
+            <declare name="choice" type="Integer" array="False" size=""/>
+            <assign variable="clinicName[0]" expression="&quot;Njala Health Post&quot;"/>
+            <assign variable="clinicDoctorOnDuty[0]" expression="true"/>
+            <assign variable="clinicOpenSlots[0]" expression="0"/>
+            <assign variable="clinicACTStock[0]" expression="0"/>
+            <assign variable="clinicName[1]" expression="&quot;Gondama Health Post&quot;"/>
+            <assign variable="clinicDoctorOnDuty[1]" expression="true"/>
+            <assign variable="clinicOpenSlots[1]" expression="3"/>
+            <assign variable="clinicACTStock[1]" expression="0"/>
+            <assign variable="clinicName[2]" expression="&quot;Kenema Government Hospital&quot;"/>
+            <assign variable="clinicDoctorOnDuty[2]" expression="true"/>
+            <assign variable="clinicOpenSlots[2]" expression="5"/>
+            <assign variable="clinicACTStock[2]" expression="12"/>
+            <assign variable="clinicName[3]" expression="&quot;Bo Government Hospital&quot;"/>
+            <assign variable="clinicDoctorOnDuty[3]" expression="false"/>
+            <assign variable="clinicOpenSlots[3]" expression="2"/>
+            <assign variable="clinicACTStock[3]" expression="0"/>
+            <assign variable="clinicName[4]" expression="&quot;Serabu Health Centre&quot;"/>
+            <assign variable="clinicDoctorOnDuty[4]" expression="false"/>
+            <assign variable="clinicOpenSlots[4]" expression="0"/>
+            <assign variable="clinicACTStock[4]" expression="6"/>
+            <output expression="&quot;====================================&quot;" newline="True"/>
+            <output expression="&quot;  CHARS - Community Health Access&quot;" newline="True"/>
+            <output expression="&quot;        and Referral System&quot;" newline="True"/>
+            <output expression="&quot;====================================&quot;" newline="True"/>
+            <output expression="&quot;1. Check Clinic Availability&quot;" newline="True"/>
+            <output expression="&quot;2. Check ACT (Malaria Medicine) Stock&quot;" newline="True"/>
+            <output expression="&quot;3. Book Appointment&quot;" newline="True"/>
+            <output expression="&quot;4. Emergency Referral&quot;" newline="True"/>
+            <output expression="&quot;Enter your choice (1-4):&quot;" newline="True"/>
+            <input variable="choice"/>
+            <if expression="choice = 1">
+                <then>
+                    <call expression="checkAvailability(clinicName, clinicDoctorOnDuty, clinicOpenSlots)"/>
+                </then>
+                <else>
+                    <if expression="choice = 2">
+                        <then>
+                            <call expression="checkMedicineStock(clinicName, clinicACTStock)"/>
+                        </then>
+                        <else>
+                            <if expression="choice = 3">
+                                <then>
+                                    <call expression="bookAppointment(clinicName, clinicOpenSlots)"/>
+                                </then>
+                                <else>
+                                    <if expression="choice = 4">
+                                        <then>
+                                            <call expression="referEmergency(clinicName, clinicDoctorOnDuty)"/>
+                                        </then>
+                                        <else>
+                                            <output expression="&quot;Invalid option. Please run again and choose 1-4.&quot;" newline="True"/>
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                        </else>
+                    </if>
+                </else>
+            </if>
+        </body>
+    </function>
+    <function name="checkAvailability" type="None" variable="">
+        <parameters>
+            <parameter name="names" type="String" array="True"/>
+            <parameter name="doctorOnDuty" type="Boolean" array="True"/>
+            <parameter name="openSlots" type="Integer" array="True"/>
+        </parameters>
+        <body>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <declare name="found" type="Boolean" array="False" size=""/>
+            <assign variable="i" expression="0"/>
+            <assign variable="found" expression="false"/>
+            <output expression="&quot;Searching nearby clinics for a doctor on duty and an open slot...&quot;" newline="True"/>
+            <while expression="i &lt;= 4 &amp;&amp; found = false">
+                <if expression="doctorOnDuty[i] = true &amp;&amp; openSlots[i] &gt; 0">
+                    <then>
+                        <output expression="names[i] &amp; &quot; - &quot; &amp; openSlots[i] &amp; &quot; slot(s) available&quot;" newline="True"/>
+                        <assign variable="found" expression="true"/>
+                    </then>
+                    <else/>
+                </if>
+                <assign variable="i" expression="i + 1"/>
+            </while>
+            <if expression="found = false">
+                <then>
+                    <output expression="&quot;No clinic with both a doctor on duty and an open slot was found nearby.&quot;" newline="True"/>
+                </then>
+                <else/>
+            </if>
+        </body>
+    </function>
+    <function name="checkMedicineStock" type="None" variable="">
+        <parameters>
+            <parameter name="names" type="String" array="True"/>
+            <parameter name="stock" type="Integer" array="True"/>
+        </parameters>
+        <body>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <declare name="anyFound" type="Boolean" array="False" size=""/>
+            <assign variable="anyFound" expression="false"/>
+            <output expression="&quot;Checking nearby clinics for ACT (Artemisinin-based Combination Therapy) stock...&quot;" newline="True"/>
+            <for variable="i" start="0" end="4" direction="inc" step="1">
+                <if expression="stock[i] &gt; 0">
+                    <then>
+                        <output expression="names[i] &amp; &quot; has &quot; &amp; stock[i] &amp; &quot; unit(s) of ACT in stock&quot;" newline="True"/>
+                        <assign variable="anyFound" expression="true"/>
+                    </then>
+                    <else/>
+                </if>
+            </for>
+            <if expression="anyFound = false">
+                <then>
+                    <output expression="&quot;ACT is not currently in stock at any nearby clinic.&quot;" newline="True"/>
+                </then>
+                <else/>
+            </if>
+        </body>
+    </function>
+    <function name="bookAppointment" type="None" variable="">
+        <parameters>
+            <parameter name="names" type="String" array="True"/>
+            <parameter name="openSlots" type="Integer" array="True"/>
+        </parameters>
+        <body>
+            <declare name="clinicNumber" type="Integer" array="False" size=""/>
+            <declare name="idx" type="Integer" array="False" size=""/>
+            <output expression="&quot;1=Njala  2=Gondama  3=Kenema Govt  4=Bo Govt  5=Serabu&quot;" newline="True"/>
+            <output expression="&quot;Enter clinic number to book (1-5):&quot;" newline="True"/>
+            <input variable="clinicNumber"/>
+            <assign variable="idx" expression="clinicNumber - 1"/>
+            <if expression="openSlots[idx] &gt; 0">
+                <then>
+                    <output expression="&quot;Appointment confirmed at &quot; &amp; names[idx]" newline="True"/>
+                </then>
+                <else>
+                    <output expression="&quot;No slots available at &quot; &amp; names[idx] &amp; &quot;. Suggesting the next available clinic...&quot;" newline="True"/>
+                </else>
+            </if>
+        </body>
+    </function>
+    <function name="referEmergency" type="None" variable="">
+        <parameters>
+            <parameter name="names" type="String" array="True"/>
+            <parameter name="doctorOnDuty" type="Boolean" array="True"/>
+        </parameters>
+        <body>
+            <declare name="isEmergency" type="Boolean" array="False" size=""/>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <declare name="found" type="Boolean" array="False" size=""/>
+            <output expression="&quot;Is this an emergency? (true = yes / false = no):&quot;" newline="True"/>
+            <input variable="isEmergency"/>
+            <if expression="isEmergency = true">
+                <then>
+                    <assign variable="i" expression="0"/>
+                    <assign variable="found" expression="false"/>
+                    <while expression="i &lt;= 4 &amp;&amp; found = false">
+                        <if expression="doctorOnDuty[i] = true">
+                            <then>
+                                <output expression="&quot;URGENT REFERRAL: Proceed to &quot; &amp; names[i] &amp; &quot; immediately&quot;" newline="True"/>
+                                <assign variable="found" expression="true"/>
+                            </then>
+                            <else/>
+                        </if>
+                        <assign variable="i" expression="i + 1"/>
+                    </while>
+                    <if expression="found = false">
+                        <then>
+                            <output expression="&quot;No nearby clinic available. Contact the district hospital hotline immediately.&quot;" newline="True"/>
+                        </then>
+                        <else/>
+                    </if>
+                </then>
+                <else>
+                    <output expression="&quot;Symptoms not flagged as an emergency. Please use Book Appointment instead.&quot;" newline="True"/>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>
