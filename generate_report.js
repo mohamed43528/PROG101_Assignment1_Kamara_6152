@@ -187,8 +187,8 @@ const tocSection = [
   tocLine("4. Flowchart", 11),
   tocLine("5. Functional Modules", 12),
   tocLine("6. Expected Outputs — Sample Scenarios", 13),
-  tocLine("7. GitHub Repository Evidence", 14),
-  tocLine("8. References", 15),
+  tocLine("7. GitHub Repository Evidence", 15),
+  tocLine("8. References", 16),
   pageBreak(),
 ];
 
@@ -283,6 +283,9 @@ const pseudocodeSection = [
 const flowchartSection = [
   h1("4. Flowchart"),
   body("The flowchart below is the visual equivalent of the pseudocode in Section 3, showing the same four decision branches (Check Availability, Check Medicine, Book Appointment, Emergency Referral) and the expanding-radius search pattern shared by the availability and emergency branches. The source file (diagrams/flowchart.mmd, Mermaid format) is included in the project's GitHub repository and can also be opened and edited visually in diagrams.net (Draw.io)."),
+  body("In addition to this overview diagram, the same logic was rebuilt as an executable flowchart in Flowgorithm (diagrams/CHARS.fprg, also in the repository), with each module (checkAvailability, checkMedicineStock, bookAppointment, referEmergency) as its own linked flowchart using Flowgorithm's Declare, Input, Output, If, While, For, and Call symbols. Because Flowgorithm has no record/struct data type, each clinic's details are represented as parallel arrays (clinicName, clinicDoctorOnDuty, clinicOpenSlots, clinicACTStock) rather than the Clinic record shown in Section 3 -- the decision and repetition logic is otherwise identical. This version can be run directly to produce the sample outputs in Section 6.", { italics: true }),
+  body("Insert a screenshot of the Flowgorithm flowchart (Main and each procedure) below before printing.", { italics: true, color: "A05A00" }),
+  new Paragraph({ spacing: { before: 200, after: 300 }, children: [new TextRun({ text: "[ Insert Flowgorithm screenshot(s) here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
   new Paragraph({
     alignment: AlignmentType.CENTER,
     spacing: { before: 200, after: 200 },
@@ -357,28 +360,52 @@ const modulesSection = [
 // ========================================================================
 // 6. EXPECTED OUTPUTS (sample scenarios)
 // ========================================================================
+const sampleDataTable = new Table({
+  width: { size: 100, type: WidthType.PERCENTAGE },
+  borders: {
+    top: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+    bottom: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+    left: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+    right: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+    insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+    insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+  },
+  rows: [
+    headerRow(["#", "Clinic", "Doctor on duty", "Open slots", "ACT stock"]),
+    moduleRow("1", "Njala Health Post", "Yes", "0", "0"),
+    moduleRow("2", "Gondama Health Post", "Yes", "3", "0"),
+    moduleRow("3", "Kenema Government Hospital", "Yes", "5", "12"),
+    moduleRow("4", "Bo Government Hospital", "No", "2", "0"),
+    moduleRow("5", "Serabu Health Centre", "No", "0", "6"),
+  ],
+});
+
 const scenariosSection = [
   h1("6. Expected Outputs — Sample Scenarios"),
+  body("The scenarios below use the fixed five-clinic sample dataset built into the Flowgorithm program (diagrams/CHARS.fprg), so they can be reproduced exactly by running that file -- these are not illustrative-only figures."),
+  sampleDataTable,
+  body(" ", {}),
 
-  h2("Scenario A: Routine availability check"),
-  body("Input: A CHW in Bo District dials the USSD code and selects \"Check Availability\", entering the patient's village as the location.", { }),
-  body("Processing: The system searches a 5 km radius; no clinic has an open slot, so the radius expands to 10 km, where one clinic with a doctor on duty and 3 open slots is found.", { }),
-  body("Output: \"Gondama Community Health Post - 3 slots available.\"", { bold: true }),
+  h2("Scenario A: Routine availability check (Menu option 1)"),
+  body("Input: Select \"1. Check Clinic Availability\".", {}),
+  body("Processing: The system scans clinics nearest-first for the first one with both a doctor on duty and an open slot. Njala (#1) has a doctor but 0 open slots, so it is skipped; Gondama (#2) has a doctor and 3 open slots.", {}),
+  body("Output: \"Gondama Health Post - 3 slot(s) available\"", { bold: true }),
 
-  h2("Scenario B: Medicine not in stock nearby"),
-  body("Input: A patient selects \"Check Medicine\" and enters \"Artemisinin-based combination therapy\" as the medicine and their chiefdom as the location.", { }),
-  body("Processing: The system checks every clinic within 25 km; none report stock greater than zero for that medicine.", { }),
-  body("Output: \"Artemisinin-based combination therapy not currently in stock nearby.\"", { bold: true }),
+  h2("Scenario B: Medicine stock check (Menu option 2)"),
+  body("Input: Select \"2. Check ACT (Malaria Medicine) Stock\".", {}),
+  body("Processing: The system checks every clinic's ACT stock level, not just the nearest.", {}),
+  body("Output: \"Kenema Government Hospital has 12 unit(s) of ACT in stock\" and \"Serabu Health Centre has 6 unit(s) of ACT in stock\"", { bold: true }),
 
-  h2("Scenario C: Successful appointment booking"),
-  body("Input: A returning, already-registered patient selects \"Book Appointment\", chooses a clinic, and requests a date three days from now.", { }),
-  body("Processing: The chosen clinic has 2 open slots on that date, so the booking is confirmed and the clinic's open-slot count is reduced to 1.", { }),
-  body("Output: SMS -- \"Appointment confirmed at Kenema Govt Hospital on 2026-10-14.\"", { bold: true }),
+  h2("Scenario C: Successful appointment booking (Menu option 3)"),
+  body("Input: Select \"3. Book Appointment\", then enter clinic number 2 (Gondama Health Post).", {}),
+  body("Processing: Gondama has 3 open slots, so the booking is confirmed.", {}),
+  body("Output: \"Appointment confirmed at Gondama Health Post\"", { bold: true }),
 
-  h2("Scenario D: Emergency referral"),
-  body("Input: A CHW selects \"Emergency Referral\" and enters the symptom description \"difficulty breathing\" with the patient's location.", { }),
-  body("Processing: \"difficulty breathing\" matches an emergency keyword; the system searches outward and finds a staffed clinic 8 km away on the second expansion of the radius.", { }),
-  body("Output: \"URGENT REFERRAL: Proceed to Serabu Community Health Centre immediately\" and a notification SMS is sent to that clinic warning staff of the incoming patient.", { bold: true }),
+  h2("Scenario D: Emergency referral (Menu option 4)"),
+  body("Input: Select \"4. Emergency Referral\", then enter true when asked whether this is an emergency.", {}),
+  body("Processing: Unlike Scenario A, this search only requires a doctor on duty -- it does not require an open slot, because an emergency cannot wait for a routine booking slot to free up. Njala (#1) is the nearest clinic with a doctor, so it is selected immediately even though Scenario A had to skip it for being full.", {}),
+  body("Output: \"URGENT REFERRAL: Proceed to Njala Health Post immediately\"", { bold: true }),
+  body("This contrast between Scenario A and Scenario D is deliberate: it demonstrates why the emergency branch is a separate module with its own, less restrictive condition, rather than reusing the availability-check logic.", { italics: true }),
 
   pageBreak(),
 ];
@@ -388,7 +415,7 @@ const scenariosSection = [
 // ========================================================================
 const githubSection = [
   h1("7. GitHub Repository Evidence"),
-  body("This project's report, pseudocode, and flowchart source are version-controlled in a GitHub repository named using the required convention PROG101_Assignment1_StudentName_StudentID. The repository contains a README.md describing the project, the pseudocode file, the flowchart source file, and this report, with regular commits made during development."),
+  body("This project's report, pseudocode, and flowchart source (both the Mermaid diagram and the runnable Flowgorithm program, CHARS.fprg) are version-controlled in a GitHub repository named using the required convention PROG101_Assignment1_StudentName_StudentID. The repository contains a README.md describing the project, the pseudocode file, the flowchart source files, and this report, with regular commits made during development."),
   body("Repository URL: [insert your GitHub repository URL here after pushing]", { italics: true }),
   body("Insert a screenshot of the repository's file listing and a screenshot of the commit history below before printing/submitting.", { italics: true, color: "A05A00" }),
   new Paragraph({ spacing: { before: 200, after: 200 }, children: [new TextRun({ text: "[ Insert repository screenshot here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
