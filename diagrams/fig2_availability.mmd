@@ -1,0 +1,9 @@
+flowchart TD
+    A([Start: Check Clinic Availability]) --> B[Get patient location]
+    B --> C{Clinic found within radius<br/>with doctor on duty and open slot?}
+    C -->|No — radius less than max| D[Increase search radius]
+    D --> C
+    C -->|Yes| E[Display clinic name and open slots]
+    C -->|No — max radius reached| F[Display: No availability found nearby]
+    E --> G([Log interaction and End])
+    F --> G

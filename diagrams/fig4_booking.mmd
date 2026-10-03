@@ -1,0 +1,11 @@
+flowchart TD
+    A([Start: Book Appointment]) --> B[Get patient phone number]
+    B --> C{Patient already registered?}
+    C -->|No| D[Register new patient]
+    D --> E[Get preferred clinic and date]
+    C -->|Yes| E
+    E --> F{Slot available<br/>on that date?}
+    F -->|Yes| G["Confirm booking, reduce open slots,<br/>send SMS confirmation"]
+    F -->|No| H[Suggest next available date]
+    G --> I([Log interaction and End])
+    H --> I

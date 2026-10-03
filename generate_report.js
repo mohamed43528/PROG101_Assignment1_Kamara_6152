@@ -83,11 +83,39 @@ function labelValueRow(label, value) {
   });
 }
 
-// ---------- image ----------
-const flowchartImg = fs.readFileSync("diagrams/flowchart.png");
-// original render was 1700 wide @ scale 2 => treat displayed size below
-const imgWidth = 620;
-const imgHeight = Math.round(620 * (2514 / 3368));
+// ---------- images ----------
+// Each figure is sized to fit the page (max width 620, max height 880 "units",
+// matching docx-js's pixel-based ImageRun scale) so the printed text stays large
+// and legible, rather than cramming the whole system into one diagram.
+function fitImage(path, nativeW, nativeH, maxW = 600, maxH = 760) {
+  const scale = Math.min(maxW / nativeW, maxH / nativeH);
+  return {
+    data: fs.readFileSync(path),
+    width: Math.round(nativeW * scale),
+    height: Math.round(nativeH * scale),
+  };
+}
+
+const fig1 = fitImage("diagrams/fig1_overview.png", 2667, 1854);
+const fig2 = fitImage("diagrams/fig2_availability.png", 2574, 2328);
+const fig3 = fitImage("diagrams/fig3_medicine.png", 1758, 2481);
+const fig4 = fitImage("diagrams/fig4_booking.png", 1749, 3597);
+const fig5 = fitImage("diagrams/fig5_emergency.png", 3408, 3174);
+
+function figureParagraph(fig, caption) {
+  return [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200, after: 100 },
+      children: [new ImageRun({ type: "png", data: fig.data, transformation: { width: fig.width, height: fig.height } })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { ...LINE_SPACING, after: 160 },
+      children: [new TextRun({ text: caption, font: FONT, size: 18, italics: true })],
+    }),
+  ];
+}
 
 // ========================================================================
 // COVER PAGE
@@ -185,10 +213,15 @@ const tocSection = [
   tocLine("2. Step-by-Step Algorithm", 6),
   tocLine("3. Pseudocode", 7),
   tocLine("4. Flowchart", 11),
-  tocLine("5. Functional Modules", 12),
-  tocLine("6. Expected Outputs — Sample Scenarios", 13),
-  tocLine("7. GitHub Repository Evidence", 15),
-  tocLine("8. References", 16),
+  tocLine("    Figure 1 — System Overview", 12),
+  tocLine("    Figure 2 — Check Clinic Availability", 13),
+  tocLine("    Figure 3 — Check Medicine Stock", 14),
+  tocLine("    Figure 4 — Book Appointment", 15),
+  tocLine("    Figure 5 — Emergency Referral", 16),
+  tocLine("5. Functional Modules", 17),
+  tocLine("6. Expected Outputs — Sample Scenarios", 18),
+  tocLine("7. GitHub Repository Evidence", 20),
+  tocLine("8. References", 21),
   pageBreak(),
 ];
 
@@ -282,22 +315,30 @@ const pseudocodeSection = [
 // ========================================================================
 const flowchartSection = [
   h1("4. Flowchart"),
-  body("The flowchart below is the visual equivalent of the pseudocode in Section 3, showing the same four decision branches (Check Availability, Check Medicine, Book Appointment, Emergency Referral) and the expanding-radius search pattern shared by the availability and emergency branches. The source file (diagrams/flowchart.mmd, Mermaid format) is included in the project's GitHub repository and can also be opened and edited visually in diagrams.net (Draw.io)."),
-  body("In addition to this overview diagram, the same logic was rebuilt as an executable flowchart in Flowgorithm (diagrams/CHARS.fprg, also in the repository), with each module (checkAvailability, checkMedicineStock, bookAppointment, referEmergency) as its own linked flowchart using Flowgorithm's Declare, Input, Output, If, While, For, and Call symbols. Because Flowgorithm has no record/struct data type, each clinic's details are represented as parallel arrays (clinicName, clinicDoctorOnDuty, clinicOpenSlots, clinicACTStock) rather than the Clinic record shown in Section 3 -- the decision and repetition logic is otherwise identical. This version can be run directly to produce the sample outputs in Section 6.", { italics: true }),
-  body("Insert a screenshot of the Flowgorithm flowchart (Main and each procedure) below before printing.", { italics: true, color: "A05A00" }),
-  new Paragraph({ spacing: { before: 200, after: 300 }, children: [new TextRun({ text: "[ Insert Flowgorithm screenshot(s) here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
-  new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { before: 200, after: 200 },
-    children: [
-      new ImageRun({
-        type: "png",
-        data: flowchartImg,
-        transformation: { width: imgWidth, height: imgHeight },
-      }),
-    ],
-  }),
-  body("Figure 1: CHARS system flowchart.", { italics: true, size: 18 }),
+  body("The flowcharts below are the visual equivalent of the pseudocode in Section 3. To keep every box and label legible when printed, the system is shown as one simple overview diagram (Figure 1) plus one full-page diagram per module (Figures 2-5), rather than a single diagram with all branches combined. All five source files (diagrams/fig1_overview.mmd ... fig5_emergency.mmd, Mermaid format) are included in the project's GitHub repository and can also be opened and edited visually in diagrams.net (Draw.io)."),
+  body("The same logic was additionally rebuilt as an executable flowchart in Flowgorithm (diagrams/CHARS.fprg, also in the repository), with each module as its own linked flowchart using Flowgorithm's Declare, Input, Output, If, While, For, and Call symbols. Because Flowgorithm has no record/struct data type, each clinic's details are represented as parallel arrays (clinicName, clinicDoctorOnDuty, clinicOpenSlots, clinicACTStock) rather than the Clinic record shown in Section 3 -- the decision and repetition logic is otherwise identical. This version can be run directly to produce the sample outputs in Section 6.", { italics: true }),
+  body("Insert a screenshot of the Flowgorithm flowchart below before printing.", { italics: true, color: "A05A00" }),
+  new Paragraph({ spacing: { before: 100, after: 200 }, children: [new TextRun({ text: "[ Insert Flowgorithm screenshot here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
+  pageBreak(),
+
+  h2("Figure 1 — System Overview"),
+  ...figureParagraph(fig1, "Figure 1: Main menu and routing to each module."),
+  pageBreak(),
+
+  h2("Figure 2 — Check Clinic Availability"),
+  ...figureParagraph(fig2, "Figure 2: checkAvailability() — expanding-radius search for a clinic with a doctor on duty and an open slot."),
+  pageBreak(),
+
+  h2("Figure 3 — Check Medicine Stock"),
+  ...figureParagraph(fig3, "Figure 3: checkMedicineStock() — scans nearby clinics' stock records for the requested medicine."),
+  pageBreak(),
+
+  h2("Figure 4 — Book Appointment"),
+  ...figureParagraph(fig4, "Figure 4: bookAppointment() — registers the patient if needed, then confirms or suggests an alternative date."),
+  pageBreak(),
+
+  h2("Figure 5 — Emergency Referral"),
+  ...figureParagraph(fig5, "Figure 5: referEmergency() — bypasses the open-slot requirement and searches only for a doctor on duty."),
   pageBreak(),
 ];
 

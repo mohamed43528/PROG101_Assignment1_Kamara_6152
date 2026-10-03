@@ -43,8 +43,8 @@ services).
 |---|---|
 | `docs/CHARS_Assignment_Report.docx` | Full assignment report: rationale, algorithm, pseudocode, flowchart, modules, sample outputs, SDG/Open Source/DPG justification, references |
 | `docs/pseudocode.txt` | Pseudocode for all system modules (plain text) |
-| `diagrams/flowchart.mmd` | Overview flowchart source (Mermaid syntax) — open at https://mermaid.live or import into diagrams.net |
-| `diagrams/flowchart.png` | Rendered overview flowchart image |
+| `diagrams/fig1_overview.mmd` … `fig5_emergency.mmd` | Flowchart source, one diagram per module (Mermaid syntax) — split into five so each prints full-page and legible, rather than one cramped diagram. Open at https://mermaid.live or import into diagrams.net |
+| `diagrams/fig1_overview.png` … `fig5_emergency.png` | Rendered flowchart images (same five, used in the report) |
 | `diagrams/CHARS.fprg` | **Runnable flowchart built in Flowgorithm** — open directly in the Flowgorithm app and press Run to reproduce the Section 6 sample outputs |
 | `generate_report.js` | Script used to generate the .docx report (Node.js, `docx` npm package) |
 | `generate_flowgorithm.py` | Script used to generate `diagrams/CHARS.fprg` |
@@ -73,7 +73,7 @@ services).
 | `logInteraction()` | Stores each session's outcome for reporting |
 
 Full pseudocode: [`docs/pseudocode.txt`](docs/pseudocode.txt)
-Flowchart: [`diagrams/flowchart.mmd`](diagrams/flowchart.mmd)
+Flowcharts: [`diagrams/`](diagrams/) (one diagram per module) and [`diagrams/CHARS.fprg`](diagrams/CHARS.fprg) (runnable version)
 
 ## Open Source & Digital Public Good
 
