@@ -1,8 +1,0 @@
-flowchart TD
-    A([Start: Check Medicine Stock]) --> B[Get medicine name and patient location]
-    B --> C[Search nearby clinics' stock records]
-    C --> D{Medicine in stock<br/>at any clinic?}
-    D -->|Yes| E[Display every clinic that has it in stock]
-    D -->|No| F[Display: Not currently in stock nearby]
-    E --> G([Log interaction and End])
-    F --> G

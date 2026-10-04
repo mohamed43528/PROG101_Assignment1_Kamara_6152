@@ -96,11 +96,11 @@ function fitImage(path, nativeW, nativeH, maxW = 600, maxH = 760) {
   };
 }
 
-const fig1 = fitImage("diagrams/fig1_overview.png", 2667, 1854);
-const fig2 = fitImage("diagrams/fig2_availability.png", 2574, 2328);
-const fig3 = fitImage("diagrams/fig3_medicine.png", 1758, 2481);
-const fig4 = fitImage("diagrams/fig4_booking.png", 1749, 3597);
-const fig5 = fitImage("diagrams/fig5_emergency.png", 3408, 3174);
+const fig1 = fitImage("diagrams/fig1_drawio.png", 3450, 2325);
+const fig2 = fitImage("diagrams/fig2_drawio.png", 2460, 2235);
+const fig3 = fitImage("diagrams/fig3_drawio.png", 2340, 2595);
+const fig4 = fitImage("diagrams/fig4_drawio.png", 2460, 3315);
+const fig5 = fitImage("diagrams/fig5_drawio.png", 2580, 2925);
 
 function figureParagraph(fig, caption) {
   return [
@@ -315,7 +315,7 @@ const pseudocodeSection = [
 // ========================================================================
 const flowchartSection = [
   h1("4. Flowchart"),
-  body("The flowcharts below are the visual equivalent of the pseudocode in Section 3. To keep every box and label legible when printed, the system is shown as one simple overview diagram (Figure 1) plus one full-page diagram per module (Figures 2-5), rather than a single diagram with all branches combined. All five source files (diagrams/fig1_overview.mmd ... fig5_emergency.mmd, Mermaid format) are included in the project's GitHub repository and can also be opened and edited visually in diagrams.net (Draw.io)."),
+  body("The flowcharts below are the visual equivalent of the pseudocode in Section 3, built in diagrams.net (Draw.io) -- one of the flowcharting tools named in the assignment brief. To keep every box and label legible when printed, the system is shown as one simple overview diagram (Figure 1) plus one full-page diagram per module (Figures 2-5), rather than a single diagram with all branches combined. The source file (diagrams/CHARS.drawio, containing all five diagrams as separate pages) is included in the project's GitHub repository and can be opened and edited directly at https://app.diagrams.net (File > Open From > Device)."),
   body("The same logic was additionally rebuilt as an executable flowchart in Flowgorithm (diagrams/CHARS.fprg, also in the repository), with each module as its own linked flowchart using Flowgorithm's Declare, Input, Output, If, While, For, and Call symbols. Because Flowgorithm has no record/struct data type, each clinic's details are represented as parallel arrays (clinicName, clinicDoctorOnDuty, clinicOpenSlots, clinicACTStock) rather than the Clinic record shown in Section 3 -- the decision and repetition logic is otherwise identical. This version can be run directly to produce the sample outputs in Section 6.", { italics: true }),
   body("Insert a screenshot of the Flowgorithm flowchart below before printing.", { italics: true, color: "A05A00" }),
   new Paragraph({ spacing: { before: 100, after: 200 }, children: [new TextRun({ text: "[ Insert Flowgorithm screenshot here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
@@ -456,7 +456,7 @@ const scenariosSection = [
 // ========================================================================
 const githubSection = [
   h1("7. GitHub Repository Evidence"),
-  body("This project's report, pseudocode, and flowchart source (both the five Mermaid diagrams in Section 4 and the runnable Flowgorithm program, CHARS.fprg) are version-controlled in a GitHub repository named using the required convention PROG101_Assignment1_StudentName_StudentID. The repository contains a README.md describing the project, the pseudocode file, the flowchart source files, and this report, with regular commits made during development."),
+  body("This project's report, pseudocode, and flowchart source (both the diagrams.net/Draw.io file behind the five figures in Section 4, CHARS.drawio, and the runnable Flowgorithm program, CHARS.fprg) are version-controlled in a GitHub repository named using the required convention PROG101_Assignment1_StudentName_StudentID. The repository contains a README.md describing the project, the pseudocode file, the flowchart source files, and this report, with regular commits made during development."),
   body("Repository URL: [insert your GitHub repository URL here after pushing]", { italics: true }),
   body("Insert a screenshot of the repository's file listing and a screenshot of the commit history below before printing/submitting.", { italics: true, color: "A05A00" }),
   new Paragraph({ spacing: { before: 200, after: 200 }, children: [new TextRun({ text: "[ Insert repository screenshot here ]", font: FONT, size: BODY_SIZE, italics: true, color: "888888" })] }),
@@ -474,7 +474,7 @@ const referencesSection = [
   bulletPara("World Bank. (2022). Sierra Leone Health Sector and Digital Health Overview. https://www.worldbank.org"),
   bulletPara("GSMA. (2023). The Mobile Economy: Sub-Saharan Africa. https://www.gsma.com"),
   bulletPara("Limkokwing University of Creative Technology, Sierra Leone. (2026). PROG101: Principles of Programming Logic and Design — Assignment Brief."),
-  bulletPara("Mermaid.js Documentation. (n.d.). Flowchart Syntax. https://mermaid.js.org"),
+  bulletPara("JGraph Ltd (diagrams.net / Draw.io). (n.d.). Documentation. https://www.drawio.com/doc/"),
 ];
 
 // ========================================================================
